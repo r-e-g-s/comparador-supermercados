@@ -41,7 +41,7 @@ for patron in [
 
     "seller"
 
-\]:
+]:
 
     if patron in texto:
 
