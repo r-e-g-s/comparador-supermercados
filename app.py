@@ -161,7 +161,7 @@ else:
             )
 
             st.caption(
-                f"${item['jumbo']:,} x {item[''cantidad']} = ${subtotal:,.0f}"
+                f"${item['jumbo']:,} x {item['cantidad']} = ${subtotal:,.0f}"
             )
 
         with col2:
