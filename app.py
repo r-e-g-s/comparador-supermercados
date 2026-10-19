@@ -219,8 +219,8 @@ else:
             )
 
             st.caption(
-                f"Jumbo: ${item['jumbo'\]:,} | "
-                f"Líder: ${item['lider'\]:,} | "
+                f"Jumbo: ${item['jumbo']:,} | "
+                f"Líder: ${item['lider']:,} | "
                 f"Conviene: {mejor}"
             )
 
