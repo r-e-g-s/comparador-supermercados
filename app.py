@@ -8,7 +8,7 @@ from buscador import (
 
 from difflib import SequenceMatcher
 
-def encontrar_equivalente(
+def encontrar_equivalentes(
     producto_jumbo,
     productos_lider
 ):
@@ -19,8 +19,7 @@ def encontrar_equivalente(
         .split()
     )
 
-    mejor_producto = None
-    mejor_score = -1
+    ranking = []
 
     for producto in productos_lider:
 
@@ -43,16 +42,23 @@ def encontrar_equivalente(
         ).ratio()
 
         score = (
-            comunes * 100
-            + similitud
+            comunes * 1000
+            + similitud * 100
         )
 
-        if score > mejor_score:
+        ranking.append(
+            (score, producto)
+        )
 
-            mejor_score = score
-            mejor_producto = producto
+    ranking.sort(
+        key=lambda x: x[0],
+        reverse=True
+    )
 
-    return mejor_producto
+    return [
+        x[1]
+        for x in ranking[:3]
+    ]
 
 # ===================================================
 # CONFIG
@@ -108,7 +114,7 @@ if texto:
         )
 
         opciones_jumbo = [
-            f"{x['nombre']} (${x['precio']:,})"
+            f"{x['nombre']} (${x['precio'\]:,})"
             for x in jumbo[:20]
         ]
 
@@ -129,15 +135,46 @@ if texto:
 
         producto_jumbo = jumbo[idx_jumbo]
 
-        producto_lider = encontrar_equivalente(
+        # TOP 3 equivalencias en Lider
+        equivalentes = encontrar_equivalentes(
             producto_jumbo,
             lider
         )
 
+        if len(equivalentes) == 0:
+
+            st.warning(
+                "No se encontraron equivalencias en Líder."
+            )
+
+            st.stop()
+
+        opciones_lider = [
+            f"{x['nombre']} (${x['precio'\]:,})"
+            for x in equivalentes
+        ]
+
+        st.subheader(
+            "Posibles equivalencias en Líder"
+        )
+
+        lider_sel = st.radio(
+            "Seleccione el equivalente correcto",
+            opciones_lider
+        )
+
+        idx_lider = opciones_lider.index(
+            lider_sel
+        )
+
+        producto_lider = equivalentes[
+            idx_lider
+        ]
+
         st.divider()
 
         st.subheader(
-            "Comparación automática"
+            "Comparación"
         )
 
         col1, col2 = st.columns(2)
@@ -152,7 +189,7 @@ if texto:
 
             st.metric(
                 "Precio",
-                f"${producto_jumbo['precio']:,}"
+                f"${producto_jumbo['precio'\]:,}"
             )
 
         with col2:
@@ -165,7 +202,7 @@ if texto:
 
             st.metric(
                 "Precio",
-                f"${producto_lider['precio']:,}"
+                f"${producto_lider['precio'\]:,}"
             )
 
         diferencia = (
@@ -181,7 +218,7 @@ if texto:
 
         elif diferencia < 0:
 
-            st.success(
+         t.success(
                 f"✅ Jumbo es ${abs(diferencia):,} más barato"
             )
 
