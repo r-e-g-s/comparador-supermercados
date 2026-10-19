@@ -280,4 +280,4 @@ if len(st.session_state.carro) > 0:
     total_lider = 0
     total_mixto = 0
 
-    for item in st.session_
+    for item in st.session_state.carro:
