@@ -6,6 +6,34 @@ from buscador import (
     buscar_lider
 )
 
+def encontrar_equivalente(
+    producto_jumbo,
+    productos_lider
+):
+
+    mejor_producto = None
+    mejor_score = 0
+
+    nombre_jumbo = (
+        producto_jumbo["nombre"]
+        .lower()
+    )
+
+    for producto in productos_lider:
+
+        score = SequenceMatcher(
+            None,
+            nombre_jumbo,
+            producto["nombre"].lower()
+        ).ratio()
+
+        if score > mejor_score:
+
+            mejor_score = score
+            mejor_producto = producto
+
+    return mejor_producto
+
 # ===================================================
 # CONFIG
 # ===================================================
