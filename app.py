@@ -55,49 +55,19 @@ if texto:
         jumbo = buscar_jumbo(texto)
         lider = buscar_lider(texto)
 
-        col1, col2 = st.columns(2)
+        st.subheader(
+            f"Jumbo ({len(jumbo)})"
+        )
 
-        # -------------------
-        # JUMBO
-        # -------------------
+        opciones_jumbo = [
+            f"{x['nombre']} (${x['precio']:,})"
+            for x in jumbo[:20]
+        ]
 
-        with col1:
-
-            st.subheader(
-                f"Jumbo ({len(jumbo)})"
-            )
-
-            opciones_jumbo = [
-                f"{x['nombre']} (${x['precio']:,})"
-                for x in jumbo[:20]
-            ]
-
-            jumbo_sel = st.radio(
-                "Producto Jumbo",
-                opciones_jumbo,
-                key="jumbo_radio"
-            )
-
-        # -------------------
-        # LIDER
-        # -------------------
-
-        with col2:
-
-            st.subheader(
-                f"Líder ({len(lider)})"
-            )
-
-            opciones_lider = [
-                f"{x['nombre']} (${x['precio']:,})"
-                for x in lider[:20]
-            ]
-
-            lider_sel = st.radio(
-                "Producto Líder",
-                opciones_lider,
-                key="lider_radio"
-            )
+        jumbo_sel = st.radio(
+            "Seleccione producto",
+            opciones_jumbo
+        )
 
         cantidad = st.number_input(
             "Cantidad",
@@ -105,23 +75,77 @@ if texto:
             value=1
         )
 
-        if st.button("Agregar al carrito"):
+        idx_jumbo = opciones_jumbo.index(
+            jumbo_sel
+        )
 
-            idx_jumbo = opciones_jumbo.index(
-                jumbo_sel
+        producto_jumbo = jumbo[idx_jumbo]
+
+        producto_lider = encontrar_equivalente(
+            producto_jumbo,
+            lider
+        )
+
+        st.divider()
+
+        st.subheader(
+            "Comparación automática"
+        )
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            st.write("### Jumbo")
+
+            st.write(
+                producto_jumbo["nombre"]
             )
 
-            idx_lider = opciones_lider.index(
-                lider_sel
+            st.metric(
+                "Precio",
+                f"${producto_jumbo['precio']:,}"
             )
 
-            producto_jumbo = jumbo[idx_jumbo]
-            producto_lider = lider[idx_lider]
+        with col2:
 
-            diferencia = (
-                producto_jumbo["precio"]
-                - producto_lider["precio"]
+            st.write("### Líder")
+
+            st.write(
+                producto_lider["nombre"]
             )
+
+            st.metric(
+                "Precio",
+                f"${producto_lider['precio']:,}"
+            )
+
+        diferencia = (
+            producto_jumbo["precio"]
+            - producto_lider["precio"]
+        )
+
+        if diferencia > 0:
+
+            st.success(
+                f"✅ Líder es ${abs(diferencia):,} más barato"
+            )
+
+        elif diferencia < 0:
+
+            st.success(
+                f"✅ Jumbo es ${abs(diferencia):,} más barato"
+            )
+
+        else:
+
+            st.info(
+                "✅ Ambos tienen el mismo precio"
+            )
+
+        if st.button(
+            "Agregar al carrito"
+        ):
 
             st.session_state.carro.append({
 
@@ -146,29 +170,12 @@ if texto:
                 "Producto agregado al carrito."
             )
 
-            if diferencia > 0:
-
-                st.success(
-                    f"✅ Líder es ${abs(diferencia):,} más barato"
-                )
-
-            elif diferencia < 0:
-
-                st.success(
-                    f"✅ Jumbo es ${abs(diferencia):,} más barato"
-                )
-
-            else:
-
-                st.info(
-                    "✅ Ambos tienen el mismo precio"
-                )
-
     except Exception as e:
 
         st.error(
             f"Error en búsqueda: {e}"
         )
+
 
 # ===================================================
 # CARRITO
