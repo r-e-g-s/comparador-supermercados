@@ -1,33 +1,24 @@
 import streamlit as st
+import requests
 
-from buscador import (
-    buscar_jumbo,
-    buscar_lider
+st.title("Diagnóstico Jumbo")
+
+url = "https://www.jumbo.cl/busqueda?ft=leche"
+
+r = requests.get(
+    url,
+    headers={
+        "User-Agent": (
+            "Mozilla/5.0 "
+            "AppleWebKit/537.36 "
+            "(KHTML, like Gecko) "
+            "Chrome/125.0 Safari/537.36"
+        )
+    }
 )
 
-st.set_page_config(
-    page_title="Prueba Buscador",
-    page_icon="🛒"
-)
+st.write("Status:", r.status_code)
 
-st.title(
-    "Prueba de búsqueda supermercados"
-)
+st.write("Primeros 5000 caracteres")
 
-texto = st.text_input(
-    "Buscar producto"
-)
-
-if st.button("Buscar"):
-
-    st.subheader("Jumbo")
-
-    jumbo = buscar_jumbo(texto)
-
-    st.write(jumbo)
-
-    st.subheader("Líder")
-
-    lider = buscar_lider(texto)
-
-    st.write(lider)
+st.text(r.text[:5000])
