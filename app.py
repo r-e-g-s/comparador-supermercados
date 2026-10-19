@@ -38,7 +38,7 @@ for patron in [
 
     '"offers"'
 
-\]:
+]:
 
     if patron in texto:
 
