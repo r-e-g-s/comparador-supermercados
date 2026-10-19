@@ -23,7 +23,7 @@ st.set_page_config(
 if "carro" not in st.session_state:
     st.session_state.carro = []
 
-# LIMPIAR CARRITOS ANTIGUOS SIN CAMPO "lider"
+# Limpia registros antiguos
 st.session_state.carro = [
     item
     for item in st.session_state.carro
@@ -57,9 +57,9 @@ if texto:
 
         col1, col2 = st.columns(2)
 
-        # ---------------------------
+        # -------------------
         # JUMBO
-        # ---------------------------
+        # -------------------
 
         with col1:
 
@@ -68,7 +68,7 @@ if texto:
             )
 
             opciones_jumbo = [
-                f"{x['nombre']} (${x['precio']:,})"
+                f"{x['nombre']} (${x['precio'\]:,})"
                 for x in jumbo[:20]
             ]
 
@@ -78,9 +78,9 @@ if texto:
                 key="jumbo_radio"
             )
 
-        # ---------------------------
+        # -------------------
         # LIDER
-        # ---------------------------
+        # -------------------
 
         with col2:
 
@@ -89,7 +89,7 @@ if texto:
             )
 
             opciones_lider = [
-                f"{x['nombre']} (${x['precio']:,})"
+                f"{x['nombre']} (${x['precio'\]:,})"
                 for x in lider[:20]
             ]
 
@@ -105,9 +105,7 @@ if texto:
             value=1
         )
 
-        if st.button(
-            "Agregar al carrito"
-        ):
+        if st.button("Agregar al carrito"):
 
             idx_jumbo = opciones_jumbo.index(
                 jumbo_sel
@@ -117,16 +115,27 @@ if texto:
                 lider_sel
             )
 
+            producto_jumbo = jumbo[idx_jumbo]
+            producto_lider = lider[idx_lider]
+
+            diferencia = (
+                producto_jumbo["precio"]
+                - producto_lider["precio"]
+            )
+
             st.session_state.carro.append({
 
-                "producto":
-                    jumbo[idx_jumbo]["nombre"],
+                "producto_jumbo":
+                    producto_jumbo["nombre"],
+
+                "producto_lider":
+                    producto_lider["nombre"],
 
                 "jumbo":
-                    jumbo[idx_jumbo]["precio"],
+                    producto_jumbo["precio"],
 
                 "lider":
-                    lider[idx_lider]["precio"],
+                    producto_lider["precio"],
 
                 "cantidad":
                     cantidad
@@ -136,6 +145,24 @@ if texto:
             st.success(
                 "Producto agregado al carrito."
             )
+
+            if diferencia > 0:
+
+                st.success(
+                    f"✅ Líder es ${abs(diferencia):,} más barato"
+                )
+
+            elif diferencia < 0:
+
+                st.success(
+                    f"✅ Jumbo es ${abs(diferencia):,} más barato"
+                )
+
+            else:
+
+                st.info(
+                    "✅ Ambos tienen el mismo precio"
+                )
 
     except Exception as e:
 
@@ -151,9 +178,7 @@ st.divider()
 
 st.subheader("🛒 Carrito")
 
-if st.button(
-    "🗑 Vaciar carrito"
-):
+if st.button("🗑 Vaciar carrito"):
 
     st.session_state.carro = []
 
@@ -173,32 +198,29 @@ else:
 
         col1, col2 = st.columns([8, 1])
 
-        jumbo_precio = item.get(
-            "jumbo",
-            0
-        )
-
-        lider_precio = item.get(
-            "lider",
-            0
-        )
-
-        mejor = (
-            "Jumbo"
-            if jumbo_precio < lider_precio
-            else "Líder"
-        )
-
         with col1:
 
             st.write(
-                f"**{item['producto']}** "
-                f"x {item['cantidad']}"
+                f"**Jumbo:** {item['producto_jumbo']}"
+            )
+
+            st.write(
+                f"**Líder:** {item['producto_lider']}"
+            )
+
+            st.write(
+                f"Cantidad: {item['cantidad']}"
+            )
+
+            mejor = (
+                "Jumbo"
+                if item["jumbo"] < item["lider"]
+                else "Líder"
             )
 
             st.caption(
-                f"Jumbo: ${jumbo_precio:,} | "
-                f"Líder: ${lider_precio:,} | "
+                f"Jumbo: ${item['jumbo'\]:,} | "
+                f"Líder: ${item['lider'\]:,} | "
                 f"Conviene: {mejor}"
             )
 
@@ -242,15 +264,15 @@ if len(st.session_state.carro) > 0:
             * item["cantidad"]
         )
 
+        mixto = min(
+            jumbo_total,
+            lider_total
+        )
+
         mejor = (
             "Jumbo"
             if jumbo_total < lider_total
             else "Líder"
-        )
-
-        mixto = min(
-            jumbo_total,
-            lider_total
         )
 
         total_jumbo += jumbo_total
@@ -259,20 +281,24 @@ if len(st.session_state.carro) > 0:
 
         detalle.append({
 
-            "Producto":
-                item["producto"],
+            "Producto Jumbo":
+                item["producto_jumbo"],
+
+            "Producto Líder":
+                item["producto_lider"],
 
             "Cantidad":
                 item["cantidad"],
 
-            "Jumbo":
+            "Total Jumbo":
                 jumbo_total,
 
-            "Líder":
+            "Total Líder":
                 lider_total,
 
             "Mejor":
                 mejor
+
         })
 
     st.divider()
@@ -304,10 +330,7 @@ if len(st.session_state.carro) > 0:
     )
 
     ahorro = (
-        max(
-            total_jumbo,
-            total_lider
-        )
+        max(total_jumbo, total_lider)
         - total_mixto
     )
 
