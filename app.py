@@ -114,7 +114,7 @@ if texto:
         )
 
         opciones_jumbo = [
-            f"{x['nombre']} (${x['precio'\]:,})"
+            f"{x['nombre']} (${x['precio']:,})"
             for x in jumbo[:20]
         ]
 
@@ -150,7 +150,7 @@ if texto:
             st.stop()
 
         opciones_lider = [
-            f"{x['nombre']} (${x['precio'\]:,})"
+            f"{x['nombre']} (${x['precio']:,})"
             for x in equivalentes
         ]
 
@@ -189,7 +189,7 @@ if texto:
 
             st.metric(
                 "Precio",
-                f"${producto_jumbo['precio'\]:,}"
+                f"${producto_jumbo['precio']:,}"
             )
 
         with col2:
@@ -202,7 +202,7 @@ if texto:
 
             st.metric(
                 "Precio",
-                f"${producto_lider['precio'\]:,}"
+                f"${producto_lider['precio']:,}"
             )
 
         diferencia = (
