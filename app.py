@@ -36,7 +36,7 @@ if texto:
         )
 
         opciones_jumbo = [
-            f"{x['nombre']} (${x['precio'\]:,})"
+            f"{x['nombre']} (${x['precio']:,})"
             for x in jumbo[:20]
         ]
 
@@ -52,7 +52,7 @@ if texto:
         )
 
         opciones_lider = [
-            f"{x['nombre']} (${x['precio'\]:,})"
+            f"{x['nombre']} (${x['precio']:,})"
             for x in lider[:20]
         ]
 
