@@ -135,7 +135,7 @@ if busqueda:
         with col1:
 
             opciones_jumbo = [
-                f"{x['nombre']} (${x['precio'\]:,})"
+                f"{x['nombre']} (${x['precio']:,})"
                 for x in datos["jumbo"]
             ]
 
@@ -151,7 +151,7 @@ if busqueda:
         with col2:
 
             opciones_lider = [
-                f"{x['nombre']} (${x['precio'\]:,})"
+                f"{x['nombre']} (${x['precio']:,})"
                 for x in datos["lider"]
             ]
 
