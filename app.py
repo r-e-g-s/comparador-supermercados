@@ -35,7 +35,7 @@ if st.button("Buscar"):
         f"Coincidencias encontradas: {len(encontrados)}"
     )
 
-    for nombre, precio in encontrados[:20\]:
+    for nombre, precio in encontrados[:20]:
 
         st.write({
             "nombre": nombre,
