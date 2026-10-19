@@ -1,7 +1,8 @@
 import streamlit as st
 import requests
+import re
 
-st.title("Diagnóstico Jumbo")
+st.title("Diagnóstico Jumbo 2")
 
 url = "https://www.jumbo.cl/busqueda?ft=leche"
 
@@ -17,8 +18,32 @@ r = requests.get(
     }
 )
 
+texto = r.text
+
 st.write("Status:", r.status_code)
 
-st.write("Primeros 5000 caracteres")
+coincidencias = []
 
-st.text(r.text[:5000])
+for patron in [
+
+    "__NEXT_DATA__",
+
+    "price",
+
+    "sellingPrice",
+
+    "products",
+
+    '"name"',
+
+    '"offers"'
+
+\]:
+
+    if patron in texto:
+
+        coincidencias.append(patron)
+
+st.write("Patrones encontrados:")
+
+st.write(coincidencias)
