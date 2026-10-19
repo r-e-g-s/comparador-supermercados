@@ -6,6 +6,8 @@ from buscador import (
     buscar_lider
 )
 
+from difflib import SequenceMatcher
+
 def encontrar_equivalente(
     producto_jumbo,
     productos_lider
