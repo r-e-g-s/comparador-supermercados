@@ -32,38 +32,33 @@ def limpiar(texto):
     return texto.strip()
 
 
-def similitud(busqueda, nombre):
-
-    return SequenceMatcher(
-        None,
-        limpiar(busqueda),
-        limpiar(nombre)
-    ).ratio()
-
-
 def puntaje(busqueda, nombre):
 
+    busqueda_limpia = limpiar(busqueda)
+    nombre_limpio = limpiar(nombre)
+
     palabras_busqueda = set(
-        limpiar(busqueda).split()
+        busqueda_limpia.split()
     )
 
-    palabras_nombre = set(
-        limpiar(nombre).split()
+    palabras_producto = set(
+        nombre_limpio.split()
     )
 
     coincidencias = len(
         palabras_busqueda.intersection(
-            palabras_nombre
+            palabras_producto
         )
     )
 
-    score_texto = similitud(
-        busqueda,
-        nombre
-    )
+    score_texto = SequenceMatcher(
+        None,
+        busqueda_limpia,
+        nombre_limpio
+    ).ratio()
 
     return (
-        coincidencias * 10
+        coincidencias * 1000
         + score_texto
     )
 
@@ -90,7 +85,9 @@ def ordenar_productos(
 
 def buscar_jumbo(texto):
 
-    url = f"https://www.jumbo.cl/busqueda?ft={texto}"
+    url = (
+        f"https://www.jumbo.cl/busqueda?ft={texto}"
+    )
 
     r = requests.get(
         url,
@@ -107,7 +104,6 @@ def buscar_jumbo(texto):
     )
 
     productos = []
-
     vistos = set()
 
     for nombre, precio in encontrados:
@@ -141,8 +137,7 @@ def buscar_lider(texto):
     )
 
     url = (
-        f"https://super.lider.cl/v/"
-        f"{busqueda_url}"
+        f"https://super.lider.cl/v/{busqueda_url}"
     )
 
     r = requests.get(
@@ -160,7 +155,6 @@ def buscar_lider(texto):
     )
 
     productos = []
-
     vistos = set()
 
     for nombre, precio in encontrados:
