@@ -115,7 +115,7 @@ if st.button(
 
     st.rerun()
 
-if len(.session_state.carro) == 0:
+if len(st.session_state.carro) == 0:
 
     st.info(
         "Carrito vacío."
