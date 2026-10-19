@@ -1,58 +1,43 @@
 import streamlit as st
 import requests
+import re
 
-st.title("Diagnóstico Líder")
+st.title("Extractor Líder")
 
-url = "https://super.lider.cl/v/leche"
-
-r = requests.get(
-    url,
-    headers={
-        "User-Agent": (
-            "Mozilla/5.0 "
-            "AppleWebKit/537.36 "
-            "(KHTML, like Gecko) "
-            "Chrome/125.0 Safari/537.36"
-        )
-    }
+texto = st.text_input(
+    "Buscar",
+    value="leche"
 )
 
-st.write("Status:", r.status_code)
+if st.button("Buscar"):
 
-texto = r.text
+    url = (
+        f"https://super.lider.cl/v/{texto}"
+    )
 
-patrones = []
+    r = requests.get(
+        url,
+        headers={
+            "User-Agent":
+            "Mozilla/5.0"
+        }
+    )
 
-for patron in [
+    html = r.text
 
-    "__NEXT_DATA__",
+    encontrados = re.findall(
+        r'"name":"([^"]+)".{0,500}?"price":"?(\d+)',
+        html,
+        flags=re.DOTALL
+    )
 
-    "price",
+    st.write(
+        f"Coincidencias encontradas: {len(encontrados)}"
+    )
 
-    "products",
+    for nombre, precio in encontrados[:20\]:
 
-    '"name"',
-
-    '"offers"',
-
-    "itemOffered",
-
-    "productName",
-
-    "seller"
-
-]:
-
-    if patron in texto:
-
-        patrones.append(patron)
-
-st.write("Patrones encontrados:")
-
-st.write(patrones)
-
-st.divider()
-
-st.write("Primeros 5000 caracteres:")
-
-st.text(texto[:5000])
+        st.write({
+            "nombre": nombre,
+            "precio": precio
+        })
