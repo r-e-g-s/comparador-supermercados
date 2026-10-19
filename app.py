@@ -62,7 +62,7 @@ if busqueda:
             for producto in resultados:
 
                 opciones.append(
-                    f"{producto['nombre']} (${producto['precio'\]:,})"
+                    f"{producto['nombre']} (${producto['precio']:,})"
                 )
 
             seleccionado = st.radio(
