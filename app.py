@@ -2,48 +2,45 @@ import streamlit as st
 import requests
 import re
 
-st.title("Diagnóstico Jumbo 2")
+st.title("Extractor Jumbo")
 
-url = "https://www.jumbo.cl/busqueda?ft=leche"
-
-r = requests.get(
-    url,
-    headers={
-        "User-Agent": (
-            "Mozilla/5.0 "
-            "AppleWebKit/537.36 "
-            "(KHTML, like Gecko) "
-            "Chrome/125.0 Safari/537.36"
-        )
-    }
+texto = st.text_input(
+    "Buscar",
+    value="leche"
 )
 
-texto = r.text
+if st.button("Buscar"):
 
-st.write("Status:", r.status_code)
+    url = (
+        f"https://www.jumbo.cl/busqueda?ft={texto}"
+    )
 
-coincidencias = []
+    r = requests.get(
+        url,
+        headers={
+            "User-Agent":
+            "Mozilla/5.0"
+        }
+    )
 
-for patron in [
+    html = r.text
 
-    "__NEXT_DATA__",
+    encontrados = re.findall(
 
-    "price",
+        r'"name":"([^"]+)".{0,500}?"price":"?(\d+)',
 
-    "sellingPrice",
+        html,
 
-    "products",
+        flags=re.DOTALL
+    )
 
-    '"name"',
+    st.write(
+        f"Coincidencias encontradas: {len(encontrados)}"
+    )
 
-    '"offers"'
+    for nombre, precio in encontrados[:20\]:
 
-]:
-
-    if patron in texto:
-
-        coincidencias.append(patron)
-
-st.write("Patrones encontrados:")
-
-st.write(coincidencias)
+        st.write({
+            "nombre": nombre,
+            "precio": precio
+        })
