@@ -219,59 +219,6 @@ if st.button("🗑 Vaciar carrito"):
 
     st.rerun()
 
-if len(st.session_state.carro) == 0:
-
-    st.info(
-        "Carrito vacío."
-    )
-
-else:
-
-    eliminar = None
-
-    for i, item in enumerate(
-        st.session_state.carro
-    ):
-
-        mejor = (
-            "Jumbo"
-            if item["jumbo"] < item["lider"]
-            else "Líder"
-        )
-
-        col1, col2 = st.columns([8,1])
-
-        with col1:
-
-            st.write(
-                f"**{item['producto']}** "
-                f"x {item['cantidad']}"
-            )
-
-            st.caption(
-                f"Conviene comprar en: {mejor}"
-            )
-
-        with col2:
-
-            if st.button(
-                "❌",
-                key=f"del_{i}"
-            ):
-                eliminar = i
-
-    if eliminar is not None:
-
-        st.session_state.carro.pop(
-            eliminar
-        )
-
-        st.rerun()
-
-# ===================================================
-# RESUMEN DETALLADO
-# ===================================================
-
 if len(st.session_state.carro) > 0:
 
     resumen = []
@@ -281,4 +228,89 @@ if len(st.session_state.carro) > 0:
     total_mixto = 0
 
     for item in st.session_state.carro:
-    print(item)
+
+        jumbo_total = (
+            item["jumbo"] *
+            item["cantidad"]
+        )
+
+        lider_total = (
+            item["lider"] *
+            item["cantidad"]
+        )
+
+        mejor = (
+            "Jumbo"
+            if jumbo_total < lider_total
+            else "Líder"
+        )
+
+        resumen.append({
+
+            "Producto":
+                item["producto"],
+
+            "Cantidad":
+                item["cantidad"],
+
+            "Jumbo":
+                jumbo_total,
+
+            "Líder":
+                lider_total,
+
+            "Mejor opción":
+                mejor
+
+        })
+
+        total_jumbo += jumbo_total
+        total_lider += lider_total
+
+        total_mixto += min(
+            jumbo_total,
+            lider_total
+        )
+
+    st.divider()
+
+    st.subheader(
+        "📋 Detalle Comparación"
+    )
+
+    st.dataframe(
+        pd.DataFrame(resumen),
+        use_container_width=True
+    )
+
+    st.divider()
+
+    st.subheader(
+        "📊 Resumen"
+    )
+
+    c1, c2, c3 = st.columns(3)
+
+    c1.metric(
+        "Total Jumbo",
+        f"${total_jumbo:,.0f}"
+    )
+
+    c2.metric(
+        "Total Líder",
+        f"${total_lider:,.0f}"
+    )
+
+    c3.metric(
+        "Compra Mixta",
+        f"${total_mixto:,.0f}"
+    )
+
+    ahorro = (
+        max(total_jumbo, total_lider)
+        - total_mixto
+    )
+
+    st.success(
+        f"💰 Ahorro Potencial: ${ahorro:,.0f}"
+    )
