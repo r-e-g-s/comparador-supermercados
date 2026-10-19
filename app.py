@@ -99,7 +99,7 @@ for _, row in filtro.iterrows():
     with col2:
 
         st.write(
-            f"Jumbo: ${row['jumbo']:,,}"
+            f"Jumbo: ${row['jumbo']:,}"
         )
 
     with col3:
