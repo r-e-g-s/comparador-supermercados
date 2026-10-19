@@ -13,21 +13,39 @@ def encontrar_equivalente(
     productos_lider
 ):
 
-    mejor_producto = None
-    mejor_score = 0
-
-    nombre_jumbo = (
+    palabras_jumbo = set(
         producto_jumbo["nombre"]
         .lower()
+        .split()
     )
+
+    mejor_producto = None
+    mejor_score = -1
 
     for producto in productos_lider:
 
-        score = SequenceMatcher(
+        nombre_lider = producto["nombre"].lower()
+
+        palabras_lider = set(
+            nombre_lider.split()
+        )
+
+        comunes = len(
+            palabras_jumbo.intersection(
+                palabras_lider
+            )
+        )
+
+        similitud = SequenceMatcher(
             None,
-            nombre_jumbo,
-            producto["nombre"].lower()
+            producto_jumbo["nombre"].lower(),
+            nombre_lider
         ).ratio()
+
+        score = (
+            comunes * 100
+            + similitud
+        )
 
         if score > mejor_score:
 
