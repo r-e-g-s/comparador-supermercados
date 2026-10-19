@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
 
+# ===================================================
+# CONFIG
+# ===================================================
+
 st.set_page_config(
     page_title="Comparador Supermercados",
     page_icon="🛒",
@@ -13,50 +17,64 @@ st.set_page_config(
 
 PRODUCTOS = {
 
-    "leche proteina":{
+    "leche proteina": {
 
-        "jumbo":[
+        "jumbo": [
             {
-                "nombre":"Leche Full Proteina Cappuccino 250ml",
-                "precio":1390
+                "nombre": "Leche Full Proteina Cappuccino 250ml",
+                "precio": 1390
             },
             {
-                "nombre":"Leche Full Proteina Chocolate 250ml",
-                "precio":1450
+                "nombre": "Leche Full Proteina Chocolate 250ml",
+                "precio": 1450
             }
         ],
 
-        "lider":[
+        "lider": [
             {
-                "nombre":"Leche Full Proteina Cappuccino 250ml",
-                "precio":1490
+                "nombre": "Leche Full Proteina Cappuccino 250ml",
+                "precio": 1490
             },
             {
-                "nombre":"Leche Full Proteina Chocolate 250ml",
-                "precio":1550
+                "nombre": "Leche Full Proteina Chocolate 250ml",
+                "precio": 1550
             }
         ]
-
     },
 
-    "arroz":{
+    "arroz": {
 
-        "jumbo":[
+        "jumbo": [
             {
-                "nombre":"Arroz Tucapel 1kg",
-                "precio":1990
+                "nombre": "Arroz Tucapel 1kg",
+                "precio": 1990
             }
         ],
 
-        "lider":[
+        "lider": [
             {
-                "nombre":"Arroz Tucapel 1kg",
-                "precio":1890
+                "nombre": "Arroz Tucapel 1kg",
+                "precio": 1890
             }
         ]
+    },
 
+    "aceite": {
+
+        "jumbo": [
+            {
+                "nombre": "Aceite Maravilla 1L",
+                "precio": 2290
+            }
+        ],
+
+        "lider": [
+            {
+                "nombre": "Aceite Maravilla 1L",
+                "precio": 2490
+            }
+        ]
     }
-
 }
 
 # ===================================================
@@ -90,20 +108,34 @@ busqueda = st.text_input(
 
 if busqueda:
 
-    clave = busqueda.lower().strip()
+    texto = busqueda.lower().strip()
 
-    if clave in PRODUCTOS:
+    coincidencias = []
 
-        datos = PRODUCTOS[clave]
+    for clave in PRODUCTOS:
+
+        if texto in clave:
+
+            coincidencias.append(
+                (clave, PRODUCTOS[clave])
+            )
+
+    if len(coincidencias) > 0:
+
+        clave, datos = coincidencias[0]
 
         st.subheader("Selecciona productos")
 
         col1, col2 = st.columns(2)
 
+        # -------------------------
+        # JUMBO
+        # -------------------------
+
         with col1:
 
             opciones_jumbo = [
-                f"{x['nombre']} (${x['precio']:,})"
+                f"{x['nombre']} (${x['precio'\]:,})"
                 for x in datos["jumbo"]
             ]
 
@@ -112,10 +144,14 @@ if busqueda:
                 opciones_jumbo
             )
 
+        # -------------------------
+        # LIDER
+        # -------------------------
+
         with col2:
 
             opciones_lider = [
-                f"{x['nombre']} (${x['precio']:,})"
+                f"{x['nombre']} (${x['precio'\]:,})"
                 for x in datos["lider"]
             ]
 
@@ -160,7 +196,7 @@ if busqueda:
             )
 
             st.success(
-                "Producto agregado."
+                "Producto agregado correctamente."
             )
 
     else:
@@ -177,6 +213,12 @@ st.divider()
 
 st.subheader("🛒 Carrito")
 
+if st.button("🗑 Vaciar carrito"):
+
+    st.session_state.carro = []
+
+    st.rerun()
+
 if len(st.session_state.carro) == 0:
 
     st.info(
@@ -191,13 +233,23 @@ else:
         st.session_state.carro
     ):
 
+        mejor = (
+            "Jumbo"
+            if item["jumbo"] < item["lider"]
+            else "Líder"
+        )
+
         col1, col2 = st.columns([8,1])
 
         with col1:
 
             st.write(
-                f"{item['producto']} "
-                f"x{item['cantidad']}"
+                f"**{item['producto']}** "
+                f"x {item['cantidad']}"
+            )
+
+            st.caption(
+                f"Conviene comprar en: {mejor}"
             )
 
         with col2:
@@ -217,64 +269,15 @@ else:
         st.rerun()
 
 # ===================================================
-# COMPARACION
+# RESUMEN DETALLADO
 # ===================================================
 
 if len(st.session_state.carro) > 0:
+
+    resumen = []
 
     total_jumbo = 0
     total_lider = 0
     total_mixto = 0
 
-    for item in st.session_state.carro:
-
-        jumbo_total = (
-            item["jumbo"]
-            * item["cantidad"]
-        )
-
-        lider_total = (
-            item["lider"]
-            * item["cantidad"]
-        )
-
-        total_jumbo += jumbo_total
-        total_lider += lider_total
-
-        total_mixto += min(
-            jumbo_total,
-            lider_total
-        )
-
-    st.divider()
-
-    st.subheader(
-        "📊 Resumen"
-    )
-
-    c1, c2, c3 = st.columns(3)
-
-    c1.metric(
-        "Total Jumbo",
-        f"${total_jumbo:,.0f}"
-    )
-
-    c2.metric(
-        "Total Líder",
-        f"${total_lider:,.0f}"
-    )
-
-    c3.metric(
-        "Compra Mixta",
-        f"${total_mixto:,.0f}"
-    )
-
-    ahorro = (
-        max(total_jumbo, total_lider)
-        - total_mixto
-    )
-
-    st.success(
-        f"Ahorro potencial: ${ahorro:,.0f}"
-    )
-
+    for item in st.session_
